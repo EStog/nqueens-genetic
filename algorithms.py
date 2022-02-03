@@ -1,18 +1,20 @@
 from typing import MutableSequence, Optional, Tuple
 
-from deap import algorithms, base, tools
+import deap.algorithms
+import deap.base
+import deap.tools
 
 
 def eaSimpleWithElitism(
         population: MutableSequence,
-        toolbox: base.Toolbox,
+        toolbox: deap.base.Toolbox,
         cxpb: float,
         mutpb: float,
         ngen: int,
-        stats: Optional[tools.Statistics] = None,
-        halloffame: Optional[tools.HallOfFame] = None,
+        stats: Optional[deap.tools.Statistics] = None,
+        halloffame: Optional[deap.tools.HallOfFame] = None,
         verbose: bool = __debug__
-) -> Tuple[MutableSequence, tools.Logbook]:
+) -> Tuple[MutableSequence, deap.tools.Logbook]:
     """This algorithm reproduce the simplest evolutionary algorithm as
     presented in chapter 7 of [Back2000]_ but with elitism.
 
@@ -77,7 +79,7 @@ def eaSimpleWithElitism(
     .. [GitHubURL] https://github.com/PacktPublishing/Hands-On-Genetic-Algorithms-with-Python/blob/master/Chapter04/elitism.py
 
     """
-    logbook = tools.Logbook()
+    logbook = deap.tools.Logbook()
     logbook.header = ['gen', 'nevals'] + (stats.fields if stats else [])
 
     # Evaluate the individuals with an invalid fitness
@@ -104,7 +106,7 @@ def eaSimpleWithElitism(
         offspring = toolbox.select(population, len(population) - hof_size)
 
         # Vary the pool of individuals
-        offspring = algorithms.varAnd(offspring, toolbox, cxpb, mutpb)
+        offspring = deap.algorithms.varAnd(offspring, toolbox, cxpb, mutpb)
 
         # Evaluate the individuals with an invalid fitness
         invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
