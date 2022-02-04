@@ -14,8 +14,16 @@ from algorithms import eaSimpleWithElitism
 # define a single objective, minimizing fitness strategy:
 deap.creator.create("FitnessMin", deap.base.Fitness, weights=(-1.0,))
 
+
 # create the Individual class based on list of integers:
 deap.creator.create("Individual",
+                    array.array,
+                    typecode='i',
+                    fitness=deap.creator.FitnessMin)
+
+
+# create the Individual class based on list of integers:
+deap.creator.create("OptimizedIndividual",
                     array.array,
                     typecode='i',
                     fitness=deap.creator.FitnessMin)
@@ -47,7 +55,8 @@ def variant_ag_optimized(
         cxpb: float,
         mutpb: float,
         ngen: int,
-        toolbox: Optional[deap.base.Toolbox] = None
+        toolbox: Optional[deap.base.Toolbox] = None,
+    verbose: bool = __debug__
 ) -> Tuple[MutableSequence, Sequence, deap.tools.Logbook]:
     """This is the implementation of a variant solution to the N-Queens using Genetic Algorithm as proposed in [Wirsansky]_.
 
@@ -71,6 +80,8 @@ def variant_ag_optimized(
     :type ngen: int
     :param toolbox: A toolbox with already defined functions. This is useful, for example, in case a different function ``map`` is needed.
     :type toolbox: Optional[deap.base.Toolbox]
+    :param verbose: Whether to give extra console output or not
+    :type verbose: bool
     :return: The final population, the best individual found and a class:`~deap.tools.Logbook` with the statistics of the evolution
     :rtype: Tuple[MutableSequence, Sequence, deap.tools.Logbook]
     """
@@ -88,7 +99,6 @@ def variant_ag_optimized(
     toolbox.register("populationCreator", deap.tools.initRepeat, list, toolbox.individualCreator)
 
     # fitness calculation - compute the total distance of the list of cities represented by indices:
-
     toolbox.register("evaluate", get_violations_count, queens_amount=queens_amount)
 
     # Genetic operators:
@@ -109,6 +119,6 @@ def variant_ag_optimized(
 
     population, logbook = eaSimpleWithElitism(
         population, toolbox, cxpb=cxpb, mutpb=mutpb,
-        ngen=ngen, stats=stats, halloffame=hof)
+        ngen=ngen, stats=stats, halloffame=hof, verbose=verbose)
 
     return population, hof.items[0], logbook
