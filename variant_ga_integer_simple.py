@@ -41,7 +41,7 @@ def get_violations_count(individual: Sequence, queens_amount: int) -> Tuple[int]
     return non_violations_amount,
 
 
-def variant_ag_simple(
+def variant_ag_integer_simple(
         queens_amount: int,
         population_size: int,
         cxpb: float,
