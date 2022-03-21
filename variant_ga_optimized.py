@@ -18,7 +18,7 @@ deap.creator.create("FitnessMin", deap.base.Fitness, weights=(-1.0,))
 # create the Individual class based on list of integers:
 deap.creator.create("Individual",
                     array.array,
-                    typecode='i',
+                    typecode='B',
                     fitness=deap.creator.FitnessMin)
 
 
@@ -114,8 +114,8 @@ def variant_ag_optimized(
     stats.register("min", numpy.min)
     stats.register("avg", numpy.mean)
 
-    # define the hall-of-fame object:
-    hof = deap.tools.HallOfFame(30)
+    # define the hall-of-fame object. Keep the 10% of the best.
+    hof = deap.tools.HallOfFame(population_size*0.1)
 
     population, logbook = eaSimpleWithElitism(
         population, toolbox, cxpb=cxpb, mutpb=mutpb,
