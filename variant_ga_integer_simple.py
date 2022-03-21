@@ -17,7 +17,7 @@ deap.creator.create("FitnessMin", deap.base.Fitness, weights=(-1.0,))
 # create the Individual class based on list of integers:
 deap.creator.create("Individual",
                     array.array,
-                    typecode='i',
+                    typecode='B',
                     fitness=deap.creator.FitnessMin)
 
 
@@ -32,13 +32,13 @@ def get_violations_count(individual: Sequence, queens_amount: int) -> Tuple[int]
     Returns:
         int: the amount of violations
     """
-    non_violations_amount = 0
+    violations_amount = 0
     for i in range(queens_amount):
         for j in range(i+1, queens_amount):
             if individual[i] == individual[j] or abs(i-j) == abs(individual[i]-individual[j]):
-                non_violations_amount += 1
+                violations_amount += 1
 
-    return non_violations_amount,
+    return violations_amount,
 
 
 def variant_ag_integer_simple(
@@ -52,7 +52,7 @@ def variant_ag_integer_simple(
 ) -> Tuple[MutableSequence, Sequence, deap.tools.Logbook]:
     """This is the implementation of a simple variant solution to the N-Queens using Genetic Algorithm.
 
-    The genotype is an array of integers, where repetition is allowed. Each i-th value in the array specify the column of the i-th row where a queen is positioned. Roulette selection, one-point crossover and uniform integer mutation are used. The objective is to minimice the amount of violations (mutual-attacking queens) in the board.
+    The genotype is an array of integers, where repetition is allowed. Each i-th value in the array specify the column of the i-th row where a queen is positioned. Tournament selection, one-point crossover and uniform integer mutation are used. The objective is to minimice the amount of violations (mutual-attacking queens) in the board.
 
     :param queens_amount: The size of the board and also the amount of queens. The board will always be considered an square matrix.
     :type queens_amount: int
@@ -87,7 +87,6 @@ def variant_ag_integer_simple(
     toolbox.register('evaluate', get_violations_count, queens_amount=queens_amount)
     toolbox.register("select", deap.tools.selTournament, tournsize=2)
     toolbox.register("mate", deap.tools.cxOnePoint)
-
     toolbox.register("mutate", deap.tools.mutUniformInt, low=0,
                      up=queens_amount-1, indpb=1.0/queens_amount)
 
